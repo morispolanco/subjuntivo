@@ -11,11 +11,11 @@ def analyze_text(text):
     return subjunctive_count
 
 def main():
-    st.title("Análisis de Modo Subjuntivo")
+    st.title("Análisis de texto con SpaCy")
     text = st.text_area("Ingrese el texto a analizar", "")
     if st.button("Analizar"):
         subjunctive_count = analyze_text(text)
-        st.write(f"El texto contiene {subjunctive_count} ocurrencias del modo subjuntivo.")
+        st.write("Cantidad de subjuntivos encontrados:", subjunctive_count)
 
 if __name__ == "__main__":
     main()

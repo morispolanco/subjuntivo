@@ -1,20 +1,14 @@
 import streamlit as st
 import subprocess
 import PyPDF2
-import spacy
-from spacy import displacy
-from spacy.lang.es import Spanish
+import nltk
+from nltk import pos_tag
+from nltk.tokenize import word_tokenize
 from transformers import pipeline
 
 def download_model():
-    command = ["python", "-m", "spacy", "download", "es_core_news_sm"]
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = process.communicate()
-
-    if process.returncode == 0:
-        st.success("El modelo se ha descargado correctamente")
-    else:
-        st.error(f"Error al descargar el modelo: {stderr.decode('utf-8')}")
+    nltk.download('averaged_perceptron_tagger')
+    st.success("El modelo se ha descargado correctamente")
 
 def main():
     st.title("Análisis Gramatical y Preguntas sobre Textos en Español")
@@ -41,10 +35,9 @@ def main():
                 answer_question(text, question)
 
 def analyze_text(text):
-    nlp = spacy.load('es_core_news_sm')
-    doc = nlp(text)
-    for sent in doc.sents:
-        displacy.render(sent, style='dep', options={'compact': True, 'distance': 100})
+    tokens = word_tokenize(text)
+    tagged_tokens = pos_tag(tokens, lang='spa')
+    st.write(tagged_tokens)
 
 def answer_question(text, question):
     nlp = pipeline("question-answering", model="mrm8488/bert-base-spanish-wwm-cased-finetuned-spa-squad2-es", tokenizer="mrm8488/bert-base-spanish-wwm-cased-finetuned-spa-squad2-es")
@@ -53,6 +46,6 @@ def answer_question(text, question):
     st.write("Respuesta:", result["answer"])
 
 if __name__ == "__main__":
-    # Descargar el modelo de lenguaje spaCy al iniciar la aplicación
+    # Descargar el modelo de lenguaje NLTK al iniciar la aplicación
     download_model()
     main()

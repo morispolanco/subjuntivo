@@ -1,12 +1,4 @@
 import streamlit as st
-import subprocess
-
-def descargar_modelo():
-    comando = "python -m spacy download es_core_news_sm"
-    proceso = subprocess.Popen(comando, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    salida, error = proceso.communicate()
-    if proceso.returncode == 0:
-        st.write("El modelo se ha descargado correctamente."import streamlit as st
 import spacy.cli
 
 def descargar_modelo():

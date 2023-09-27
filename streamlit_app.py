@@ -28,14 +28,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    else:
-        st.error(f"Error al descargar el modelo: {error.decode()}")
-
-def main():
-    st.title("Descargar modelo de spaCy")
-    st.write("Presiona el botón para descargar el modelo de lenguaje.")
-    if st.button("Descargar modelo"):
-        descargar_modelo()
-
-if __name__ == "__main__":
-    main()

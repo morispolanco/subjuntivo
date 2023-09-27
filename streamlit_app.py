@@ -1,24 +1,23 @@
 import streamlit as st
 import spacy
 
-def cambiar_conjugaciones(texto):
-    nlp = spacy.load("es_core_news_sm", disable=["parser", "ner"])
+def encontrar_verbos_subjuntivo(texto):
+    nlp = spacy.load("es_core_news_sm")
     doc = nlp(texto)
-    resultado = []
+    verbos_subjuntivo = []
     for token in doc:
-        if token.tag_ == "PRON__Per=1|Num=Sing":
-            resultado.append(token.lemma_ + "a")
-        else:
-            resultado.append(token.text)
-    return " ".join(resultado)
+        if token.pos_ == "VERB" and "Sub" in token.morph.get("Mood", []):
+            verbos_subjuntivo.append(token.text)
+    return verbos_subjuntivo
 
 def main():
-    st.title("Cambiador de Conjugaciones")
-    texto = st.text_area("Ingresa el texto semiespañol:")
-    if st.button("Cambiar conjugaciones"):
-        resultado = cambiar_conjugaciones(texto)
-        st.write("Texto corregido:")
-        st.write(resultado)
+    st.title("Buscador de Verbos en Modo Subjuntivo")
+    texto = st.text_area("Ingresa el texto:")
+    if st.button("Buscar verbos en modo subjuntivo"):
+        verbos_subjuntivo = encontrar_verbos_subjuntivo(texto)
+        st.write("Verbos en modo subjuntivo encontrados:")
+        for verbo in verbos_subjuntivo:
+            st.write(verbo)
 
 if __name__ == "__main__":
     main()

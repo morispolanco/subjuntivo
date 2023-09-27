@@ -27,7 +27,7 @@ def main():
         st.write(resultado)
 
 if __name__ == "__main__":
-    main())
+    main()
     else:
         st.error(f"Error al descargar el modelo: {error.decode()}")
 

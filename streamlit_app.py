@@ -6,7 +6,7 @@ def encontrar_verbos_subjuntivo(texto):
     doc = nlp(texto)
     verbos_subjuntivo = []
     for token in doc:
-        if token.pos_ == "VERB" and "Sub" in token.morph.get("Mood", []):
+        if token.pos_ == "VERB" and "Sub" in token.morph.get("Mood", ""):
             verbos_subjuntivo.append(token.text)
     return verbos_subjuntivo
 
@@ -15,9 +15,12 @@ def main():
     texto = st.text_area("Ingresa el texto:")
     if st.button("Buscar verbos en modo subjuntivo"):
         verbos_subjuntivo = encontrar_verbos_subjuntivo(texto)
-        st.write("Verbos en modo subjuntivo encontrados:")
-        for verbo in verbos_subjuntivo:
-            st.write(verbo)
+        if verbos_subjuntivo:
+            st.write("Verbos en modo subjuntivo encontrados:")
+            for verbo in verbos_subjuntivo:
+                st.write(verbo)
+        else:
+            st.write("No se encontraron verbos en modo subjuntivo.")
 
 if __name__ == "__main__":
     main()

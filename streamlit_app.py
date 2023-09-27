@@ -8,8 +8,6 @@ def encontrar_verbos_subjuntivo(texto):
     for token in doc:
         if token.pos_ == "VERB" and "Sub" in token.morph.get("Mood", ""):
             verbos_subjuntivo.append(token.text)
-        elif token.pos_ == "AUX" and "Sub" in token.morph.get("Mood", ""):
-            verbos_subjuntivo.append(token.text)
     return verbos_subjuntivo
 
 def main():

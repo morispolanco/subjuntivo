@@ -1,26 +1,23 @@
+# Importa las bibliotecas necesarias
 import streamlit as st
-import spacy
+from pattern.es import parse, split
 
-def buscar_subjuntivos(texto):
-    nlp = spacy.load("es_core_news_sm")
-    doc = nlp(texto)
-    subjuntivos = [token.text for token in doc if token.pos_ == "VERB" and token.mood == "SUBJUNCTIVE"]
-    return subjuntivos
+# Crea una caja de texto en la interfaz de usuario de Streamlit
+text = st.text_area("Ingresa el texto aquí")
 
-def main():
-    st.title("Aplicación de búsqueda de subjuntivos")
-    st.write("Ingrese un texto para buscar subjuntivos")
+# Analiza el texto con Pattern
+parsed_text = parse(text)
 
-    texto = st.text_area("Texto")
+# Divide el texto analizado en oraciones
+sentences = split(parsed_text)
 
-    if st.button("Buscar"):
-        subjuntivos = buscar_subjuntivos(texto)
-        if subjuntivos:
-            st.write("Subjuntivos encontrados:")
-            for subjuntivo in subjuntivos:
-                st.write(subjuntivo)
-        else:
-            st.write("No se encontraron subjuntivos en el texto")
+# Busca verbos en modo subjuntivo
+subjunctive_verbs = []
+for sentence in sentences:
+    for word in sentence.words:
+        if word.type.startswith('VB') and 'subjunctive' in word.mood:
+            subjunctive_verbs.append(word.string)
 
-if __name__ == "__main__":
-    main()
+# Muestra los verbos en modo subjuntivo
+for verb in subjunctive_verbs:
+    st.write(verb)

@@ -11,7 +11,7 @@ def extract_subjunctive_verbs(text):
     A list of subjunctive verbs in the text.
   """
 
-  subjunctive_verb_regex = re.compile(r'\b(que|ojalá|quizá(s)|tal vez|acaso|espero|quiero|deseo|necesito|es importante que|es necesario que|es mejor que|es preferible que|es recomendable que|es obligatorio que|es aconsejable que|es posible que|es probable que|es dudoso que|es difícil que|es fácil que)\s+(sea|seas|sea|seamos|sean|estuviera|estuvieras|estuviera|estuviéramos|estuvieran|haya|hayas|haya|hayamos|hayan|hubiera|hubieras|hubiera|hubiéramos|hubieran)\s+\w+\b', re.IGNORECASE)
+  subjunctive_verb_regex = re.compile(r'\b(que|ojalá|quizá(s)|tal vez|acaso|espero|quiero|deseo|necesito|es importante que|es necesario que|es mejor que|es preferible que|es recomendable que|es obligatorio que|es aconsejable que|es posible que|es probable que|es dudoso que|es difícil que|es fácil que)\s+(sea|seas|sea|seamos|sean|estemos|estén|esté|fuera|fueras|fuera|fuéramos|fueran|estuviera|estuvieras|estuviera|estuviéramos|estuvieran|haya|hayas|haya|hayamos|hayan|hubiera|hubieras|hubiera|hubiéramos|hubieran)\s+\w+\b', re.IGNORECASE)
   subjunctive_verbs = []
   for match in subjunctive_verb_regex.finditer(text):
     verb = match.group(3)

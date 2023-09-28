@@ -1,31 +1,27 @@
-import stanza
 import streamlit as st
+import spacy
 
-stanza.download('es')
-nlp = stanza.Pipeline('es')
+# Cargar el modelo de Spacy para español
+nlp = spacy.load("es_core_news_sm")
 
-def extraer_subjuntivos(texto):
-    doc = nlp(texto)
-    subjuntivos = []
+# Título de la aplicación
+st.title("Localizador de verbos en subjuntivo")
 
-    for sent in doc.sentences:
-        for word in sent.words:
-            if word.feats is not None and 'Mood=Sub' in word.feats:
-                subjuntivos.append(word.text)
+# Texto de entrada
+text = st.text_area("Ingrese el texto en español:", height=200)
 
-    return subjuntivos
+# Botón para analizar el texto
+if st.button("Analizar"):
+    # Procesar el texto con Spacy
+    doc = nlp(text)
 
-def main():
-    st.title("Extracción de Subjuntivos en un Texto")
-    st.write("Esta aplicación utiliza Stanza para extraer los subjuntivos en un texto en español.")
+    # Encontrar los verbos en subjuntivo
+    subjunctive_verbs = [token.text for token in doc if token.pos_ == "VERB" and token.mood == "SUBJ"]
 
-    texto = st.text_area("Ingrese un texto:")
-
-    if st.button("Extraer Subjuntivos"):
-        subjuntivos = extraer_subjuntivos(texto)
-        st.write("Subjuntivos encontrados:")
-        for subjuntivo in subjuntivos:
-            st.write(subjuntivo)
-
-if __name__ == "__main__":
-    main()
+    # Mostrar los resultados
+    if subjunctive_verbs:
+        st.success("Se encontraron los siguientes verbos en subjuntivo:")
+        for verb in subjunctive_verbs:
+            st.write(verb)
+    else:
+        st.info("No se encontraron verbos en subjuntivo en el texto.")

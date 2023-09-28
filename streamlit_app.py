@@ -31,4 +31,9 @@ def main():
     if subjunctive_verbs:
       st.write('\n## Subjunctive verbs:')
       for verb in subjunctive_verbs:
-        st.
+        st.write(verb)
+    else:
+      st.write('No subjunctive verbs found.')
+
+if __name__ == '__main__':
+  main()

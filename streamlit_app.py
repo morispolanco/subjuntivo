@@ -1,29 +1,26 @@
 import streamlit as st
-import subprocess
 import spacy
 
-def descargar_modelo():
-    comando = "python -m spacy download es_core_news_sm"
-    proceso = subprocess.Popen(comando, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    salida, error = proceso.communicate()
-    
-    if proceso.returncode == 0:
-        st.write("Modelo descargado correctamente.")
-    else:
-        st.write("Error al descargar el modelo:", error.decode())
-
-# Llamar a la función para descargar el modelo
-descargar_modelo()
-
-# Cargar el modelo de spaCy
-nlp = spacy.load('es_core_news_sm')
-
-# Aplicación Streamlit
-st.title("Aplicación de procesamiento de texto")
-
-texto = st.text_area("Ingrese un texto en español", "")
-
-if st.button("Procesar"):
+def buscar_subjuntivos(texto):
+    nlp = spacy.load("es_core_news_sm")
     doc = nlp(texto)
-    for token in doc:
-        st.write(token.text, token.pos_, token.dep_)
+    subjuntivos = [token.text for token in doc if token.pos_ == "VERB" and token.mood == "SUBJUNCTIVE"]
+    return subjuntivos
+
+def main():
+    st.title("Aplicación de búsqueda de subjuntivos")
+    st.write("Ingrese un texto para buscar subjuntivos")
+
+    texto = st.text_area("Texto")
+
+    if st.button("Buscar"):
+        subjuntivos = buscar_subjuntivos(texto)
+        if subjuntivos:
+            st.write("Subjuntivos encontrados:")
+            for subjuntivo in subjuntivos:
+                st.write(subjuntivo)
+        else:
+            st.write("No se encontraron subjuntivos en el texto")
+
+if __name__ == "__main__":
+    main()

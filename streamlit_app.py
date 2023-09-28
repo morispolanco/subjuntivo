@@ -4,7 +4,7 @@ import spacy
 def extraer_subjuntivos(texto):
     nlp = spacy.load("es_core_news_sm")
     doc = nlp(texto)
-    subjuntivos = [token.text for token in doc if token.pos_ == "VERB" and token.mood == "SUBJ"]
+    subjuntivos = [token.text for token in doc if token.pos_ == "VERB" and "Mood=Sub" in token.tag_]
     return subjuntivos
 
 def main():

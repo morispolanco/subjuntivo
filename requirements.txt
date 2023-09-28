@@ -1,3 +1,2 @@
 streamlit
 spacy
-spacy download es_core_news_md

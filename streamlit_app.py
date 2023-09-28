@@ -14,7 +14,9 @@ def extract_subjunctive_verbs(text):
   subjunctive_verb_regex = re.compile(r'\b(que|ojalá|quizá(s)|tal vez|acaso|espero|quiero|deseo|necesito|es importante que|es necesario que|es mejor que|es preferible que|es recomendable que|es obligatorio que|es aconsejable que|es posible que|es probable que|es dudoso que|es difícil que|es fácil que)\s+(sea|seas|sea|seamos|sean|estuviera|estuvieras|estuviera|estuviéramos|estuvieran|haya|hayas|haya|hayamos|hayan|hubiera|hubieras|hubiera|hubiéramos|hubieran)\s+\w+\b', re.IGNORECASE)
   subjunctive_verbs = []
   for match in subjunctive_verb_regex.finditer(text):
-    subjunctive_verbs.append(match.group(1))
+    verb = match.group(3)
+    if verb not in subjunctive_verbs:
+      subjunctive_verbs.append(verb)
   return subjunctive_verbs
 
 def main():

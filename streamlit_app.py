@@ -1,33 +1,28 @@
 import streamlit as st
 import spacy
-from spacy.matcher import Matcher
 
-# Cargar el modelo de spaCy
-nlp = spacy.load("es_core_news_sm")
-
-# Definir la regla para identificar los verbos en subjuntivo
-matcher = Matcher(nlp.vocab)
-pattern = [{"POS": "VERB"}, {"Mood": "Sub"}]
-matcher.add("VERB_SUBJ", [pattern])
-
-# Función para obtener los verbos en subjuntivo
-def obtener_verbos_subjuntivo(texto):
-    # Procesar el texto con spaCy
+def encontrar_verbos_subjuntivo(texto):
+    nlp = spacy.load("es_core_news_sm")
     doc = nlp(texto)
-    
-    # Buscar los verbos en subjuntivo utilizando la regla personalizada
-    matches = matcher(doc)
-    
-    # Obtener los verbos en subjuntivo
-    verbos_subjuntivo = [doc[start:end].text for _, start, end in matches]
-    
+    verbos_subjuntivo = []
+    for token in doc:
+        if token.pos_ == "VERB" and "Sub" in token.morph.get("Mood", ""):
+            verbos_subjuntivo.append(token.text)
+        elif token.pos_ == "AUX" and "Sub" in token.morph.get("Mood", ""):
+            verbos_subjuntivo.append(token.text)
     return verbos_subjuntivo
 
-# Configurar la interfaz de la aplicación
-st.title("Verbos en Subjuntivo")
-texto = st.text_input("Ingrese un texto:")
-if texto:
-    verbos_subjuntivo = obtener_verbos_subjuntivo(texto)
-    st.write("Verbos en subjuntivo:")
-    for verbo in verbos_subjuntivo:
-        st.write(verbo)
+def main():
+    st.title("Buscador de Verbos en Modo Subjuntivo")
+    texto = st.text_area("Ingresa el texto:")
+    if st.button("Buscar verbos en modo subjuntivo"):
+        verbos_subjuntivo = encontrar_verbos_subjuntivo(texto)
+        if verbos_subjuntivo:
+            st.write("Verbos en modo subjuntivo encontrados:")
+            for verbo in verbos_subjuntivo:
+                st.write(verbo)
+        else:
+            st.write("No se encontraron verbos en modo subjuntivo.")
+
+if __name__ == "__main__":
+    main()

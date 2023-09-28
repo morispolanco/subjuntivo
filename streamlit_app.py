@@ -25,11 +25,5 @@ texto = st.text_area("Ingrese un texto en español", "")
 
 if st.button("Procesar"):
     doc = nlp(texto)
-    subjuntivos = [token.text for token in doc if token.pos_ == "VERB" and token.morph.get("Mood") == "Sub"]
-    
-    if subjuntivos:
-        st.write("Verbos en modo subjuntivo encontrados:")
-        for verbo in subjuntivos:
-            st.write(verbo)
-    else:
-        st.write("No se encontraron verbos en modo subjuntivo en el texto.")
+    for token in doc:
+        st.write(token.text, token.pos_, token.dep_)

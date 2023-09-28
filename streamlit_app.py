@@ -4,23 +4,21 @@ import re
 
 nlp = spacy.load("es_core_news_sm")
 
-def extract_subjunctive_verbs_from_file(filename):
-  """Extracts subjunctive verbs from a Spanish text file.
+def extract_subjunctive_verbs_from_text(text):
+  """Extracts subjunctive verbs from a Spanish text.
 
   Args:
-    filename: The path to the Spanish text file.
+    text: A Spanish text.
 
   Returns:
     A list of subjunctive verbs.
   """
 
   subjunctive_verbs = []
-  with open(filename, "r", encoding="utf-8") as f:
-    text = f.read()
-    doc = nlp(text)
-    for token in doc:
-      if token.pos == "VERB" and token.tag == "SUBJ":
-        subjunctive_verbs.append(token.text)
+  doc = nlp(text)
+  for token in doc:
+    if token.pos == "VERB" and token.tag == "SUBJ":
+      subjunctive_verbs.append(token.text)
   return subjunctive_verbs
 
 def main():
@@ -28,9 +26,9 @@ def main():
 
   st.title('Spanish Subjunctive Verb Extractor')
 
-  filename = st.text_input('Enter the path to a Spanish text file:')
-  if filename:
-    subjunctive_verbs = extract_subjunctive_verbs_from_file(filename)
+  text = st.text_area('Enter a Spanish text:')
+  if text:
+    subjunctive_verbs = extract_subjunctive_verbs_from_text(text)
     if subjunctive_verbs:
       st.write('\n## Subjunctive verbs:')
       for verb in subjunctive_verbs:

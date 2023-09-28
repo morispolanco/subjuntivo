@@ -8,7 +8,7 @@ def extraer_subjuntivos(texto):
     
     for token in doc:
         if token.pos_ == "VERB":
-            if token.head.pos_ == "SCONJ" or token.head.text.lower() in ["ojalá", "tal vez", "quizás", "a lo mejor"]:
+            if token.head.pos_ == "SCONJ" or token.head.text.lower() in ["ojalá", "tal vez", "quizás", "a lo mejor", "quiero que", "deseo que", "espero que"]:
                 subjuntivos.append(token.text)
     
     return subjuntivos

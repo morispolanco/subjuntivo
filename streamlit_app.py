@@ -1,5 +1,6 @@
-import spacy
 import streamlit as st
+import spacy
+from spacy import attrs
 
 # Cargar el modelo de spaCy
 nlp = spacy.load("es_core_news_sm")
@@ -10,7 +11,10 @@ def obtener_verbos_subjuntivo(texto):
     doc = nlp(texto)
     
     # Obtener los verbos en subjuntivo
-    verbos_subjuntivo = [token.text for token in doc if token.pos_ == "VERB" and token.dep_ == "subj"]
+    verbos_subjuntivo = []
+    for token in doc:
+        if token.pos_ == "VERB" and "Mood=Sub" in token.morph.get(attrs.MORPH):
+            verbos_subjuntivo.append(token.text)
     
     return verbos_subjuntivo
 

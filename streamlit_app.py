@@ -1,7 +1,7 @@
 import streamlit as st
 import spacy
 
-nlp = spacy.load('es_core_news_md')
+nlp= spacy.load("es_core_news_md")
 
 st.title('Buscador de verbos en subjuntivo')
 

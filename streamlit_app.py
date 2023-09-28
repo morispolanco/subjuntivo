@@ -1,24 +1,24 @@
-import streamlit as st
 import spacy
+import streamlit as st
 
-# Cargar el modelo de Spacy para español
+# Cargar el modelo de spaCy
 nlp = spacy.load("es_core_news_sm")
 
-# Título de la aplicación
-st.title("Extracción de verbos en subjuntivo en español")
+# Función para obtener los verbos en subjuntivo
+def obtener_verbos_subjuntivo(texto):
+    # Procesar el texto con spaCy
+    doc = nlp(texto)
+    
+    # Obtener los verbos en subjuntivo
+    verbos_subjuntivo = [token.text for token in doc if token.pos_ == "VERB" and token.dep_ == "subj"]
+    
+    return verbos_subjuntivo
 
-# Texto de entrada
-text = st.text_area("Ingrese el texto en español:", height=200)
-
-# Botón para extraer los verbos en subjuntivo
-if st.button("Extraer verbos en subjuntivo"):
-    # Procesar el texto con Spacy
-    doc = nlp(text)
-
-    # Encontrar los verbos en subjuntivo en el texto
-    verbos_subjuntivo = [token.text for token in doc if token.pos_ == "VERB" and token.mood == "SUBJ"]
-
-    # Mostrar los verbos en subjuntivo encontrados
-    st.subheader("Verbos en subjuntivo encontrados:")
+# Configurar la interfaz de la aplicación
+st.title("Verbos en Subjuntivo")
+texto = st.text_input("Ingrese un texto:")
+if texto:
+    verbos_subjuntivo = obtener_verbos_subjuntivo(texto)
+    st.write("Verbos en subjuntivo:")
     for verbo in verbos_subjuntivo:
         st.write(verbo)

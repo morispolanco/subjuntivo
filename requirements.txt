@@ -1,3 +1,4 @@
 streamlit
 spacy==3.0
 es_core_news_sm
+click>=7.1.2

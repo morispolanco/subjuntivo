@@ -10,7 +10,7 @@ def extraer_subjuntivos(texto):
 
     for sent in doc.sentences:
         for word in sent.words:
-            if 'Mood=Sub' in word.feats:
+            if word.feats is not None and 'Mood=Sub' in word.feats:
                 subjuntivos.append(word.text)
 
     return subjuntivos

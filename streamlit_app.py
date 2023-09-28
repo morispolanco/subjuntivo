@@ -23,8 +23,20 @@ def extract_subjunctive_verbs_from_file(filename):
         subjunctive_verbs.append(token.text)
   return subjunctive_verbs
 
-filename = "spanish_text.txt"
+def main():
+  """Renders the Streamlit app."""
 
-subjunctive_verbs = extract_subjunctive_verbs_from_file(filename)
+  st.title('Spanish Subjunctive Verb Extractor')
 
-print(subjunctive_verbs)
+  filename = st.text_input('Enter the path to a Spanish text file:')
+  if filename:
+    subjunctive_verbs = extract_subjunctive_verbs_from_file(filename)
+    if subjunctive_verbs:
+      st.write('\n## Subjunctive verbs:')
+      for verb in subjunctive_verbs:
+        st.write(verb)
+    else:
+      st.write('No subjunctive verbs found.')
+
+if __name__ == '__main__':
+  main()

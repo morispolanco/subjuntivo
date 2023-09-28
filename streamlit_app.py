@@ -1,24 +1,26 @@
+import stanza
 import streamlit as st
-import spacy
+
+stanza.download('es')
+nlp = stanza.Pipeline('es')
 
 def extraer_subjuntivos(texto):
-    nlp = spacy.load("es_core_news_sm")
     doc = nlp(texto)
     subjuntivos = []
-    
-    for token in doc:
-        if token.pos_ == "VERB":
-            if token.head.pos_ == "SCONJ" or token.head.text.lower() in ["ojalá", "tal vez", "quizás", "a lo mejor", "quiero que", "deseo que", "espero que"]:
-                subjuntivos.append(token.text)
-    
+
+    for sent in doc.sentences:
+        for word in sent.words:
+            if 'Mood=Sub' in word.feats:
+                subjuntivos.append(word.text)
+
     return subjuntivos
 
 def main():
     st.title("Extracción de Subjuntivos en un Texto")
-    st.write("Esta aplicación utiliza Spacy y el modelo es_core_news_sm para extraer los subjuntivos en un texto en español.")
+    st.write("Esta aplicación utiliza Stanza para extraer los subjuntivos en un texto en español.")
 
     texto = st.text_area("Ingrese un texto:")
-    
+
     if st.button("Extraer Subjuntivos"):
         subjuntivos = extraer_subjuntivos(texto)
         st.write("Subjuntivos encontrados:")

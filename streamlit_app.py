@@ -1,20 +1,25 @@
 import streamlit as st
 import spacy
-from spacy import attrs
+from spacy.matcher import Matcher
 
 # Cargar el modelo de spaCy
 nlp = spacy.load("es_core_news_sm")
+
+# Definir la regla para identificar los verbos en subjuntivo
+matcher = Matcher(nlp.vocab)
+pattern = [{"POS": "VERB"}, {"Mood": "Sub"}]
+matcher.add("VERB_SUBJ", None, pattern)
 
 # Función para obtener los verbos en subjuntivo
 def obtener_verbos_subjuntivo(texto):
     # Procesar el texto con spaCy
     doc = nlp(texto)
     
+    # Buscar los verbos en subjuntivo utilizando la regla personalizada
+    matches = matcher(doc)
+    
     # Obtener los verbos en subjuntivo
-    verbos_subjuntivo = []
-    for token in doc:
-        if token.pos_ == "VERB" and "Mood=Sub" in token.morph.get(attrs.MORPH):
-            verbos_subjuntivo.append(token.text)
+    verbos_subjuntivo = [doc[start:end].text for _, start, end in matches]
     
     return verbos_subjuntivo
 

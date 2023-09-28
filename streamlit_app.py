@@ -15,6 +15,9 @@ def extract_subjunctive_verbs(text):
   subjunctive_verbs = []
   for match in subjunctive_verb_regex.finditer(text):
     verb = match.group(3)
+    # Remove the trailing infinitive marker, if any.
+    verb = verb.rstrip('r')
+    # Add the verb to the list, if it is not already there.
     if verb not in subjunctive_verbs:
       subjunctive_verbs.append(verb)
   return subjunctive_verbs

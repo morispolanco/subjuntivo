@@ -1,26 +1,23 @@
 import streamlit as st
 import spacy
 
-def buscar_subjuntivos(texto):
+def extraer_subjuntivos(texto):
     nlp = spacy.load("es_core_news_sm")
     doc = nlp(texto)
-    subjuntivos = [token.text for token in doc if token.pos_ == "VERB" and token.mood == "SUBJUNCTIVE"]
+    subjuntivos = [token.text for token in doc if token.pos_ == "VERB" and token.mood == "SUBJ"]
     return subjuntivos
 
 def main():
-    st.title("Aplicación de búsqueda de subjuntivos")
-    st.write("Ingrese un texto para buscar subjuntivos")
+    st.title("Extracción de Subjuntivos en un Texto")
+    st.write("Esta aplicación utiliza Spacy y el modelo es_core_news_sm para extraer los subjuntivos en un texto en español.")
 
-    texto = st.text_area("Texto")
-
-    if st.button("Buscar"):
-        subjuntivos = buscar_subjuntivos(texto)
-        if subjuntivos:
-            st.write("Subjuntivos encontrados:")
-            for subjuntivo in subjuntivos:
-                st.write(subjuntivo)
-        else:
-            st.write("No se encontraron subjuntivos en el texto")
+    texto = st.text_area("Ingrese un texto:")
+    
+    if st.button("Extraer Subjuntivos"):
+        subjuntivos = extraer_subjuntivos(texto)
+        st.write("Subjuntivos encontrados:")
+        for subjuntivo in subjuntivos:
+            st.write(subjuntivo)
 
 if __name__ == "__main__":
     main()

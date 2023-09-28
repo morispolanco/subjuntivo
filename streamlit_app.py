@@ -7,8 +7,8 @@ nlp = spacy.load("es_core_news_sm")
 
 # Definir la regla para identificar los verbos en subjuntivo
 matcher = Matcher(nlp.vocab)
-pattern = [{"POS": "VERB"}, {"Mood": "Sub"}]
-matcher.add("VERB_SUBJ", None, pattern)
+pattern = [{"POS": "VERB", "Mood": "Sub"}]
+matcher.add("VERB_SUBJ", [pattern])
 
 # Función para obtener los verbos en subjuntivo
 def obtener_verbos_subjuntivo(texto):

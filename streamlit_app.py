@@ -1,28 +1,35 @@
 import streamlit as st
+import subprocess
 import spacy
 
-def encontrar_verbos_subjuntivo(texto):
-    nlp = spacy.load("es_core_news_sm")
+def descargar_modelo():
+    comando = "python -m spacy download es_core_news_sm"
+    proceso = subprocess.Popen(comando, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    salida, error = proceso.communicate()
+    
+    if proceso.returncode == 0:
+        st.write("Modelo descargado correctamente.")
+    else:
+        st.write("Error al descargar el modelo:", error.decode())
+
+# Llamar a la función para descargar el modelo
+descargar_modelo()
+
+# Cargar el modelo de spaCy
+nlp = spacy.load('es_core_news_sm')
+
+# Aplicación Streamlit
+st.title("Aplicación de procesamiento de texto")
+
+texto = st.text_area("Ingrese un texto en español", "")
+
+if st.button("Procesar"):
     doc = nlp(texto)
-    verbos_subjuntivo = []
-    for token in doc:
-        if token.pos_ == "VERB" and "Sub" in token.morph.get("Mood", ""):
-            verbos_subjuntivo.append(token.text)
-        elif token.pos_ == "AUX" and "Sub" in token.morph.get("Mood", ""):
-            verbos_subjuntivo.append(token.text)
-    return verbos_subjuntivo
-
-def main():
-    st.title("Buscador de Verbos en Modo Subjuntivo")
-    texto = st.text_area("Ingresa el texto:")
-    if st.button("Buscar verbos en modo subjuntivo"):
-        verbos_subjuntivo = encontrar_verbos_subjuntivo(texto)
-        if verbos_subjuntivo:
-            st.write("Verbos en modo subjuntivo encontrados:")
-            for verbo in verbos_subjuntivo:
-                st.write(verbo)
-        else:
-            st.write("No se encontraron verbos en modo subjuntivo.")
-
-if __name__ == "__main__":
-    main()
+    subjuntivos = [token.text for token in doc if token.pos_ == "VERB" and token.morph.get("Mood") == "Sub"]
+    
+    if subjuntivos:
+        st.write("Verbos en modo subjuntivo encontrados:")
+        for verbo in subjuntivos:
+            st.write(verbo)
+    else:
+        st.write("No se encontraron verbos en modo subjuntivo en el texto.")

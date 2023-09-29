@@ -4,6 +4,7 @@ import spacy
 
 # Cargar el modelo de lenguaje SpaCy
 nlp = spacy.load('es_core_news_sm')
+nlp = spacy.load('es_core_news_trf_sm')
 
 
 def extract_verbs_subjunctive(text):

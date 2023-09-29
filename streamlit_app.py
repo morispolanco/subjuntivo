@@ -1,37 +1,42 @@
 import streamlit as st
-from spacy import displacy
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import wordnet
+from nltk.stem import WordNetLemmatizer
 
-import spacy
+# Download required NLTK data
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('wordnet')
 
-nlp = spacy.download("es_core_news_sm")
+# Define a function to find verbs in subjunctive mood
+def find_subjunctive_verbs(text):
+    # Tokenize the text
+    tokens = word_tokenize(text)
+    
+    # Perform part-of-speech tagging
+    pos_tags = nltk.pos_tag(tokens)
+    
+    # Initialize the lemmatizer
+    lemmatizer = WordNetLemmatizer()
+    
+    # Filter out non-verbs
+    verbs = [(word, pos) for word, pos in pos_tags if pos.startswith('V')]
+    
+    # Filter out verbs not in the subjunctive mood
+    subjunctive_verbs = []
+    for word, pos in verbs:
+        # Use WordNet to find synonyms of the verb
+        synonyms = wordnet.synsets(word, pos='v')
+        if synonyms:
+            synonym = synonyms[0]
+            lemma = lemmatizer.lemmatize(word, get_wordnet_pos(pos))
+            # Check if the verb is in the subjunctive mood
+            if lemma in synonym.lemmas()[0].name().split('/'):
+                subjunctive_verbs.append((word, pos))
+    
+    return subjunctive_verbs
 
-# Definir la función para buscar subjuntivos
-def buscar_subjuntivos(texto):
-    # Crear un objeto de spaCy para el texto
-    doc = nlp(texto)
-    # Buscar los tokens que son subjuntivos
-    subjuntivos = [token for token in doc if token.dep_ == "subj"]
-    # Devolver una lista con los subjuntivos encontrados
-    return subjuntivos
-
-# Definir la función para mostrar los subjuntivos en la interfaz de Streamlit
-def mostrar_subjuntivos(subjuntivos):
-    # Crear una tabla para mostrar los subjuntivos
-    table = st.table(subjuntivos)
-    # Mostrar la tabla en la interfaz de Streamlit
-    st.write(table)
-
-# Definir la función principal de la aplicación
-def main():
-    # Crear un objeto de Streamlit para la interfaz de usuario
-    st.title("Buscador de subjuntivos")
-    # Crear un campo de texto para ingresar el texto a analizar
-    texto = st.text_input("Ingrese el texto a analizar:")
-    # Crear un botón para ejecutar la función de buscar subjuntivos
-    st.button("Buscar subjuntivos", on_click=buscar_subjuntivos(texto))
-    # Mostrar los subjuntivos encontrados en la interfaz de Streamlit
-    mostrar_subjuntivos(buscar_subjuntivos(texto))
-
-# Ejecutar la función principal de la aplicación
-if __name__ == "__main__":
-    main()
+# Function to get the WordNet part-of-speech
+def get_wordnet_pos(nltk_pos):
+    if nltk_pos

@@ -43,3 +43,26 @@ def get_wordnet_pos(nltk_pos):
         return wordnet.ADJ
     elif nltk_pos.startswith('V'):
         return
+        wordnet.VERB
+elif nltk_pos.startswith('N'):
+return wordnet.NOUN
+elif nltk_pos.startswith('R'):
+return wordnet.ADV
+else:
+return None
+
+Initialize Streamlit app
+st.set_page_config(page_title="Find Subjunctive Verbs in Spanish Text", page_icon=":spiral_notepad:", layout="wide")
+
+Create an input field for the text
+st.title("Find Subjunctive Verbs in Spanish Text")
+text_input = st.text_input("Paste your Spanish text here", "")
+
+Create a button to trigger the analysis
+button = st.button("Analyze Text")
+
+Display the results
+if button:
+subjunctive_verbs = find_subjunctive_verbs(text_input)
+st.success("Subjunctive Verbs Found:")
+st.write(subjunctive_verbs)

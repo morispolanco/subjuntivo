@@ -27,7 +27,7 @@ def find_subjunctive_verbs(text):
     subjunctive_verbs = []
     for word, pos in verbs:
         # Use WordNet to find synonyms of the verb
-        synonyms = wordnet.synsets(word, pos='v')
+        synonyms = wordnet.synsets(word, pos=get_wordnet_pos(pos))
         if synonyms:
             synonym = synonyms[0]
             lemma = lemmatizer.lemmatize(word, get_wordnet_pos(pos))
@@ -39,4 +39,7 @@ def find_subjunctive_verbs(text):
 
 # Function to get the WordNet part-of-speech
 def get_wordnet_pos(nltk_pos):
-    if nltk_pos
+    if nltk_pos.startswith('J'):
+        return wordnet.ADJ
+    elif nltk_pos.startswith('V'):
+        return

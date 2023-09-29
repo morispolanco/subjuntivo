@@ -1,18 +1,39 @@
 import streamlit as st
 import spacy
-from spacy.lang.es import Spanish
 
-nlp = spacy.load('es_core_news_sm')
+def extraer_verbos_subjuntivo(texto):
+    nlp = spacy.load("es_core_news_sm")
+    doc = nlp(texto)
+    
+    verbos_subjuntivo = []
+    
+    for token in doc:
+        if token.pos_ == "VERB" and token.morph.get("Mood") == "Sub":
+            verbos_subjuntivo.append(token.text)
+    
+    return verbos_subjuntivo
 
-def extract_subjunctive_verbs(text):
-    doc = nlp(text)
-    subjunctive_verbs = [token.text for token in doc if token.tag_ == "VERB" and token.morph.get("Mood") == ["Subj"]]
-    return subjunctive_verbs
+# Configuración de la página
+st.set_page_config(page_title="Extracción Verbos Subjuntivo", layout="wide")
 
-st.title('Spanish Subjunctive Verb Extractor')
+# Título y descripción
+st.title("Extracción Verbos Subjuntivo")
+st.write("Esta aplicación extrae los verbos en subjuntivo presentes en un texto.")
 
-input_text = st.text_area("Enter Spanish text here")
+# Textarea para ingresar el texto
+texto_input = st.text_area(label="Ingrese su texto aquí", height=200)
 
-if st.button('Extract Subjunctive Verbs'):
-    result = extract_subjunctive_verbs(input_text)
-    st.write(result)
+if st.button("Extraer"):
+    # Verificar si se ingresó algún texto antes de procesar
+    if not texto_input:
+        st.warning("Por favor, ingrese un texto.")
+    else:
+        # Llamar a la función para extraer los verbos en subjuntivo y mostrarlos al usuario
+        lista_verbos_subj = extraer_verbos_subjuntivo(texto_input)
+        
+        if len(lista_verbos_subj) > 0:
+            st.success(f"Se encontraron {len(lista_verbos_subj)} verbos en subjuntivo:")
+            for verbo in lista_verbos_subj:
+                st.write(verbo)
+        else:
+            st.warning("No se encontraron verbos en subjuntivo en el texto ingresado.")

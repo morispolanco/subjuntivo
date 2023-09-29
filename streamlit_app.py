@@ -1,14 +1,18 @@
 import streamlit as st
 import spacy
+from spacy.lang.es import Spanish
 
-nlp = spacy.load("es_core_news_sm")
+nlp = spacy.load('es_core_news_sm')
 
-def get_verbs(text):
+def extract_subjunctive_verbs(text):
     doc = nlp(text)
-    verbs = [token.lemma_ for token in doc if token.pos_ == "VERB" and token.tag_ == "VS"]
-    return verbs
+    subjunctive_verbs = [token.text for token in doc if token.tag_ == "VERB" and token.morph.get("Mood") == ["Subj"]]
+    return subjunctive_verbs
 
-st.title("Subjunctive Verbs Extractor")
-text = st.text_area("Enter Spanish text:", value="Estoy cansado de trabajar todos los días.")
-verbs = get_verbs(text)
-st.write("Subjunctive verbs:", verbs)
+st.title('Spanish Subjunctive Verb Extractor')
+
+input_text = st.text_area("Enter Spanish text here")
+
+if st.button('Extract Subjunctive Verbs'):
+    result = extract_subjunctive_verbs(input_text)
+    st.write(result)

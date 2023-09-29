@@ -1,26 +1,32 @@
+import spacy
 import streamlit as st
-from pattern.es import parse, split
 
-def encontrar_verbos_subjuntivo(texto):
-    parsed_text = parse(texto, lemmata=True).split()
-    verbos_subjuntivo = []
-    for sentence in parsed_text:
-        for word, tag, _, _ in sentence:
-            if "SUBJ" in tag:
-                verbos_subjuntivo.append(word)
-    return verbos_subjuntivo
 
-def main():
-    st.title("Buscador de Verbos en Modo Subjuntivo")
-    texto = st.text_area("Ingresa el texto:")
-    if st.button("Buscar verbos en modo subjuntivo"):
-        verbos_subjuntivo = encontrar_verbos_subjuntivo(texto)
-        if verbos_subjuntivo:
-            st.write("Verbos en modo subjuntivo encontrados:")
-            for verbo in verbos_subjuntivo:
-                st.write(verbo)
-        else:
-            st.write("No se encontraron verbos en modo subjuntivo.")
+# Load the Spanish model
+nlp = spacy.load("es_core_news_sm")
 
-if __name__ == "__main__":
-    main()
+
+# Define a function to extract subjunctive verbs
+def extract_subjunctive_verbs(text):
+    doc = nlp(text)
+    subjunctive_verbs = []
+    for token in doc:
+        if token.tag_ == "VMIS000":
+            subjunctive_verbs.append(token.text)
+    return subjunctive_verbs
+
+
+# Create a Streamlit app
+st.title("Subjunctive Verb Extractor")
+st.markdown("Enter a text in Spanish:")
+text = st.text_area(label="Text", value="", height=200)
+
+
+if text:
+    subj_verbs = extract_subjunctive_verbs(text)
+    if subj_verbs:
+        st.write("Subjunctive verbs found:")
+        for verb in subj_verbs:
+            st.write(verb)
+    else:
+        st.write("No subjunctive verbs found.")

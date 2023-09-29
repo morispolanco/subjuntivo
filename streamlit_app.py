@@ -1,8 +1,9 @@
 import streamlit as st
 from spacy import displacy
 
-# Cargar el modelo de spaCy para el español
-nlp = spacy.load("es_core_news_sm")
+import spacy
+
+nlp = spacy.download("es_core_news_sm")
 
 # Definir la función para buscar subjuntivos
 def buscar_subjuntivos(texto):

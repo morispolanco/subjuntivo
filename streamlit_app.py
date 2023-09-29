@@ -1,5 +1,5 @@
 import streamlit as st
-from spaCy import displacy
+from spacy import displacy
 
 # Cargar el modelo de spaCy para el español
 nlp = spacy.load("es_core_news_sm")

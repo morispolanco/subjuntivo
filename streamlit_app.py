@@ -1,23 +1,19 @@
 import streamlit as st
-import spacy
-from spacy import displacy
+from pattern.es import parse, split
 
-# Carga el modelo de lenguaje de spaCy para español
-nlp = spacy.load("es_core_news_sm")
+def find_subjunctive_verbs(text):
+    parsed_text = parse(text, lemmata=True)
+    subjunctive_verbs = []
+    for sentence in parsed_text.split():
+        for word, tag, _, lemma in sentence:
+            if tag.startswith("VB") and "subj" in tag:
+                subjunctive_verbs.append(lemma)
+    return subjunctive_verbs
 
-# Define una función que extraiga los verbos en subjuntivo de un texto
-def extract_subjunctive_verbs(text):
-    doc = nlp(text)
-    verbs = []
-    for token in doc:
-        if token.pos_ == "VERB" and token.mood == "SUBJ":
-            verbs.append(token.text)
-    return verbs
+text = "quiero que estudies y seas rico"
 
-# Crea una interfaz de usuario con Streamlit para que el usuario pueda ingresar el texto y ver los verbos en subjuntivo
-st.title("Extractor de verbos en subjuntivo")
-text = st.text_input("Ingrese el texto:")
-if st.button("Extraer verbos en subjuntivo"):
-    verbs = extract_subjunctive_verbs(text)
-    st.write("Verbos en subjuntivo:")
-    st.write(verbs)
+subjunctive_verbs = find_subjunctive_verbs(text)
+
+print("Verbos en subjuntivo encontrados:")
+for verb in subjunctive_verbs:
+    print(verb)

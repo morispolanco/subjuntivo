@@ -1,25 +1,16 @@
 import streamlit as st
-import nltk
-from nltk.tokenize import word_tokenize
-from nltk.stem import SnowballStemmer
+import spacy
 
-# Descargar los datos necesarios de NLTK
-nltk.download('punkt')
+# Cargar el modelo de lenguaje
+nlp = spacy.load("es_core_news_sm")
 
 # Definir una función para encontrar verbos en subjuntivo
 def find_subjunctive_verbs(text):
-    # Tokenizar el texto
-    tokens = word_tokenize(text, language='spanish')
-    
-    # Inicializar el stemmer
-    stemmer = SnowballStemmer('spanish')
-    
-    # Filtrar los verbos en subjuntivo
+    doc = nlp(text)
     subjunctive_verbs = []
-    for token in tokens:
-        if token.endswith('r') and stemmer.stem(token) != token:
-            subjunctive_verbs.append(token)
-    
+    for token in doc:
+        if token.pos_ == "VERB" and token.morph.get("Mood") == "Sub":
+            subjunctive_verbs.append(token.text)
     return subjunctive_verbs
 
 def main():

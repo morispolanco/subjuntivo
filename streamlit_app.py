@@ -8,7 +8,7 @@ def extract_subjunctive_verbs(text):
     subjunctive_verbs = []
     
     for token in doc:
-        if token.pos_ == 'VERB' and token.mood == 'SUBJ':
+        if token.pos_ == 'VERB' and 'Subj' in token.tag_:
             subjunctive_verbs.append(token.text)
             
     return subjunctive_verbs

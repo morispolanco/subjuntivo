@@ -1,15 +1,25 @@
 import streamlit as st
-import spacy
+import re
 
 def find_subjunctive_verbs(text):
-    nlp = spacy.load("es_core_news_sm")
-    doc = nlp(text)
-    subjunctive_verbs = []
-    for token in doc:
-        if token.pos_ == "VERB" and token.morph.get("Mood") == "Sub":
-            subjunctive_verbs.append(token.lemma_)
-    return subjunctive_verbs
+    verbs = []
+    words = text.split()
+    for i in range(len(words) - 1):
+        if words[i] == "que" and words[i+1].endswith("s"):
+            verbs.append(words[i+1])
+    return verbs
 
-text = "Espero que tú vengas a la fiesta."
-subjunctive_verbs = find_subjunctive_verbs(text)
-print(subjunctive_verbs)
+def main():
+    st.title("Identificador de verbos en subjuntivo")
+    st.write("Ingrese un texto en español para identificar los verbos en subjuntivo:")
+    
+    text = st.text_area("Texto")
+    
+    if st.button("Identificar verbos en subjuntivo"):
+        subjunctive_verbs = find_subjunctive_verbs(text)
+        st.write("Verbos en subjuntivo encontrados:")
+        for verb in subjunctive_verbs:
+            st.write(verb)
+
+if __name__ == "__main__":
+    main()

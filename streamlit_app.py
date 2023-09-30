@@ -7,7 +7,7 @@ def find_subjunctive_verbs(text):
     for sentence in parsed_text.split():
         for i, (word, tag, _, lemma) in enumerate(sentence):
             if tag.startswith("VB") and "subj" in tag:
-                if i > 0 and sentence[i-1][1] == "VB":
+                if i > 0 and sentence[i-1][1] == "VB" and sentence[i-1][0] == "que":
                     subjunctive_verbs.append(lemma)
     return subjunctive_verbs
 

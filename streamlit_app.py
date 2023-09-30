@@ -9,7 +9,7 @@ def find_subjunctive_verbs(text):
     doc = nlp(text)
     subjunctive_verbs = []
     for token in doc:
-        if token.pos_ == "VERB" and token.morph.get("Mood") == "Sub":
+        if token.pos_ == "VERB" and token.tag_ == "SUBJ":
             subjunctive_verbs.append(token.text)
     return subjunctive_verbs
 

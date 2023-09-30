@@ -1,39 +1,41 @@
 import streamlit as st
 import spacy
 
-def extraer_verbos_subjuntivo(texto):
-    nlp = spacy.load("es_core_news_sm")
-    doc = nlp(texto)
+def extract_subjunctive_verbs(text):
+    nlp = spacy.load('es_core_news_sm')
+    doc = nlp(text)
     
-    verbos_subjuntivo = []
+    subjunctive_verbs = []
     
     for token in doc:
-        if token.pos_ == "VERB" and token.morph.get("Mood") == "Sub":
-            verbos_subjuntivo.append(token.text)
-    
-    return verbos_subjuntivo
+        if token.pos_ == 'VERB' and token.mood == 'SUBJ':
+            subjunctive_verbs.append(token.text)
+            
+    return subjunctive_verbs
+
 
 # Configuración de la página
-st.set_page_config(page_title="Extracción Verbos Subjuntivo", layout="wide")
+st.set_page_config(page_title="Extracción de Verbos en Subjuntivo", layout="wide")
 
-# Título y descripción
-st.title("Extracción Verbos Subjuntivo")
-st.write("Esta aplicación extrae los verbos en subjuntivo presentes en un texto.")
+# Título y descripción de la aplicación
+st.title("Extracción de Verbos en Subjuntivo")
+st.markdown("""
+Esta aplicación extrae los verbos en subjuntivo presentes en un texto escrito 
+en español utilizando la biblioteca spaCy.
+""")
 
-# Textarea para ingresar el texto
-texto_input = st.text_area(label="Ingrese su texto aquí", height=200)
+# Área para ingresar el texto
+text_input = st.text_area("Ingrese el texto:", height=200)
 
 if st.button("Extraer"):
-    # Verificar si se ingresó algún texto antes de procesar
-    if not texto_input:
-        st.warning("Por favor, ingrese un texto.")
-    else:
-        # Llamar a la función para extraer los verbos en subjuntivo y mostrarlos al usuario
-        lista_verbos_subj = extraer_verbos_subjuntivo(texto_input)
+    if len(text_input.strip()) > 0:
+        verbs = extract_subjunctive_verbs(text_input)
         
-        if len(lista_verbos_subj) > 0:
-            st.success(f"Se encontraron {len(lista_verbos_subj)} verbos en subjuntivo:")
-            for verbo in lista_verbos_subj:
-                st.write(verbo)
+        if len(verbs) > 0:
+            # Mostrar los verbos encontrados
+            st.success(f"Se encontraron {len(verbs)} verbos en subjuntivo:")
+            for i, verb in enumerate(verbs):
+                st.write(f"{i+1}. {verb}")
         else:
-            st.warning("No se encontraron verbos en subjuntivo en el texto ingresado.")
+            # Si no se encontraron verbos, mostrar mensaje informativo
+            st.info("No se encontraron verbos en subjuntivo.")

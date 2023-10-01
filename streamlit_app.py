@@ -1,37 +1,50 @@
 import streamlit as st
-import tabula
 import pandas as pd
+import docx2txt
+import re
 import base64
 
 # Título de la aplicación
-st.title("Conversión de PDF a CSV")
+st.title("Extracción de verbos después de expresiones de esperanza o deseo")
 
-# Campo de carga de archivo PDF
-uploaded_file = st.file_uploader("Cargar archivo PDF", type="pdf")
+# Campo de carga de archivo .docx
+uploaded_file = st.file_uploader("Cargar archivo .docx", type="docx")
 
-# Función para convertir el PDF a CSV
-def convert_to_csv(pdf_file):
-    # Leer el archivo PDF y extraer las tablas
-    tables = tabula.read_pdf(pdf_file, pages='all', multiple_tables=True)
+# Función para extraer los verbos después de expresiones de esperanza o deseo
+def extraer_verbos(texto):
+    # Expresiones de esperanza o deseo en español
+    expresiones = ["quiero que", "espero que", "ojalá que", "deseo que"]
     
-    # Concatenar todas las tablas en un solo DataFrame
-    df = pd.concat(tables)
+    # Patrón regex para buscar las expresiones seguidas de un verbo
+    patron = r"(?i)(" + "|".join(expresiones) + r")\s+(\w+)"
     
-    # Guardar el DataFrame en un archivo CSV
-    csv_file = "output.csv"
-    df.to_csv(csv_file, index=False)
+    # Buscar coincidencias en el texto
+    coincidencias = re.findall(patron, texto)
     
-    return csv_file
+    # Crear un DataFrame con los verbos y su frecuencia
+    df = pd.DataFrame(coincidencias, columns=["Expresión", "Verbo"])
+    df["Frecuencia"] = df.groupby("Verbo")["Verbo"].transform("count")
+    df = df.drop_duplicates().reset_index(drop=True)
+    
+    return df
 
-# Botón para convertir el PDF a CSV y descargar el archivo
-if st.button("Convertir a CSV"):
+# Botón para extraer los verbos y descargar el archivo CSV
+if st.button("Extraer verbos"):
     if uploaded_file is not None:
-        csv_file = convert_to_csv(uploaded_file)
-        st.success("El archivo se ha convertido exitosamente a CSV.")
-        st.markdown("### Descargar archivo CSV")
-        with open(csv_file, "rb") as file:
-            b64 = base64.b64encode(file.read()).decode()
-            href = f'<a href="data:file/csv;base64,{b64}" download="output.csv">Descargar CSV</a>'
+        texto_docx = docx2txt.process(uploaded_file)
+        df_verbos = extraer_verbos(texto_docx)
+        
+        if not df_verbos.empty:
+            st.success("Se han extraído los verbos exitosamente.")
+            st.markdown("### Resultado")
+            st.dataframe(df_verbos)
+            
+            st.markdown("### Descargar archivo CSV")
+            csv = df_verbos.to_csv(index=False)
+            b64 = base64.b64encode(csv.encode()).decode()
+            href = f'<a href="data:file/csv;base64,{b64}" download="verbos.csv">Descargar CSV</a>'
             st.markdown(href, unsafe_allow_html=True)
+        else:
+            st.warning("No se encontraron verbos después de las expresiones de esperanza o deseo.")
     else:
-        st.warning("Por favor, cargue un archivo PDF.")
+        st.warning("Por favor, carga un archivo .docx.")

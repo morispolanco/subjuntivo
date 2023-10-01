@@ -1,45 +1,37 @@
 import streamlit as st
-import re
+import tabula
 import pandas as pd
 import base64
 
 # Título de la aplicación
-st.title("Extracción de verbos después de expresiones de deseo o esperanza")
+st.title("Conversión de PDF a CSV")
 
-# Campo de carga de archivo de texto
-uploaded_file = st.file_uploader("Cargar archivo de texto", type="txt")
+# Campo de carga de archivo PDF
+uploaded_file = st.file_uploader("Cargar archivo PDF", type="pdf")
 
-# Expresiones de deseo o esperanza
-expressions = ["quiero que", "espero que", "deseo que", "ojalá que"]
+# Función para convertir el PDF a CSV
+def convert_to_csv(pdf_file):
+    # Leer el archivo PDF y extraer las tablas
+    tables = tabula.read_pdf(pdf_file, pages='all', multiple_tables=True)
+    
+    # Concatenar todas las tablas en un solo DataFrame
+    df = pd.concat(tables)
+    
+    # Guardar el DataFrame en un archivo CSV
+    csv_file = "output.csv"
+    df.to_csv(csv_file, index=False)
+    
+    return csv_file
 
-# Función para extraer los verbos después de las expresiones
-def extract_verbs(text):
-    verbs = []
-    sentences = re.split(r"[.!?]", text)
-    for sentence in sentences:
-        for expression in expressions:
-            if expression in sentence:
-                verb_match = re.search(re.escape(expression) + r"\s+(\w+)", sentence)
-                if verb_match:
-                    verbs.append(verb_match.group(1))
-    return verbs
-
-# Botón para extraer los verbos y guardar en un archivo CSV
-if st.button("Extraer verbos y guardar en CSV"):
+# Botón para convertir el PDF a CSV y descargar el archivo
+if st.button("Convertir a CSV"):
     if uploaded_file is not None:
-        text = uploaded_file.read().decode("utf-8")
-        extracted_verbs = extract_verbs(text)
-        if extracted_verbs:
-            verb_freq = pd.Series(extracted_verbs).value_counts().reset_index()
-            verb_freq.columns = ['Verbo', 'Frecuencia']
-            st.success("Los verbos extraídos son:")
-            st.write(verb_freq)
-            st.markdown("### Descargar archivo CSV")
-            csv = verb_freq.to_csv(index=False)
-            b64 = base64.b64encode(csv.encode()).decode()
-            href = f'<a href="data:file/csv;base64,{b64}" download="verbos.csv">Descargar CSV</a>'
+        csv_file = convert_to_csv(uploaded_file)
+        st.success("El archivo se ha convertido exitosamente a CSV.")
+        st.markdown("### Descargar archivo CSV")
+        with open(csv_file, "rb") as file:
+            b64 = base64.b64encode(file.read()).decode()
+            href = f'<a href="data:file/csv;base64,{b64}" download="output.csv">Descargar CSV</a>'
             st.markdown(href, unsafe_allow_html=True)
-        else:
-            st.warning("No se encontraron verbos después de las expresiones de deseo o esperanza.")
     else:
-        st.warning("Por favor, cargue un archivo de texto.")
+        st.warning("Por favor, cargue un archivo PDF.")

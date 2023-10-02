@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import docx2txt
 import re
-import base64
 
 # Título de la aplicación
 st.title("Extracción de oraciones con expresiones de deseo")
@@ -26,27 +25,22 @@ def extraer_oraciones(texto):
     # Buscar coincidencias en el texto
     coincidencias = re.findall(patron, texto)
     
-    # Crear un DataFrame con las oraciones
-    df = pd.DataFrame(coincidencias, columns=["Oración"])
+    # Crear una lista con las oraciones
+    oraciones = [coincidencia[0] for coincidencia in coincidencias]
     
-    return df
+    return oraciones
 
-# Botón para extraer las oraciones y descargar el archivo CSV
+# Botón para extraer las oraciones
 if st.button("Extraer oraciones"):
     if uploaded_file is not None:
         texto_docx = docx2txt.process(uploaded_file)
-        df_oraciones = extraer_oraciones(texto_docx)
+        oraciones = extraer_oraciones(texto_docx)
         
-        if not df_oraciones.empty:
+        if oraciones:
             st.success("Se han extraído las oraciones exitosamente.")
             st.markdown("### Resultado")
-            st.table(df_oraciones)
-            
-            st.markdown("### Descargar archivo CSV")
-            csv = df_oraciones.to_csv(index=False)
-            b64 = base64.b64encode(csv.encode()).decode()
-            href = f'<a href="data:file/csv;base64,{b64}" download="oraciones.csv">Descargar CSV</a>'
-            st.markdown(href, unsafe_allow_html=True)
+            for oracion in oraciones:
+                st.write("- " + oracion)
         else:
             st.warning("No se encontraron oraciones con expresiones de deseo.")
     else:

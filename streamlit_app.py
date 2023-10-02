@@ -13,22 +13,22 @@ uploaded_file = st.file_uploader("Cargar archivo .docx", type="docx")
 # Función para extraer los verbos después de expresiones de esperanza o deseo
 def extraer_verbos(texto):
     # Expresiones de esperanza o deseo en español
-    expresiones = ["quiero", "espero", "ojalá", "deseo",
-                   "espero", "deseo", "ojalá", "quisiera",
-                   "me gustaría", "sería bueno", "sería genial",
-                   "sería fantástico", "sería maravilloso",
-                   "sería increíble", "sería ideal", "sería perfecto",
-                   "sería estupendo", "sería fabuloso", "sería deseable"]
+    expresiones = ["quiero que", "espero que", "ojalá que", "deseo que",
+                   "espero que", "deseo que", "ojalá que", "quisiera que",
+                   "me gustaría que", "sería bueno que", "sería genial que",
+                   "sería fantástico que", "sería maravilloso que",
+                   "sería increíble que", "sería ideal que", "sería perfecto que",
+                   "sería estupendo que", "sería fabuloso que", "sería deseable que"]
     
-    # Patrón regex para buscar las expresiones seguidas de un verbo
-    patron = r"(?i)(" + "|".join(expresiones) + r")\s+(\w+)"
+    # Patrón regex para buscar las expresiones seguidas de un verbo en modo subjuntivo
+    patron = r"(?i)(" + "|".join(expresiones) + r")\s+(\w+)\s+(que\s+)?(\w+)"
     
     # Buscar coincidencias en el texto
     coincidencias = re.findall(patron, texto)
     
     # Crear un DataFrame con los verbos y su frecuencia
-    df = pd.DataFrame(coincidencias, columns=["Expresión", "Verbo"])
-    df["Frecuencia"] = df.groupby("Verbo")["Verbo"].transform("count")
+    df = pd.DataFrame(coincidencias, columns=["Expresión", "Verbo", "Conector", "Verbo Subjuntivo"])
+    df["Frecuencia"] = df.groupby("Verbo Subjuntivo")["Verbo Subjuntivo"].transform("count")
     df = df.drop_duplicates().reset_index(drop=True)
     
     return df
@@ -50,6 +50,6 @@ if st.button("Extraer verbos"):
             href = f'<a href="data:file/csv;base64,{b64}" download="verbos.csv">Descargar CSV</a>'
             st.markdown(href, unsafe_allow_html=True)
         else:
-            st.warning("No se encontraron verbos después de las expresiones de esperanza o deseo.")
+            st.warning("No se encontraron verbos en modo subjuntivo después de las expresiones de esperanza o deseo.")
     else:
         st.warning("Por favor, carga un archivo .docx.")

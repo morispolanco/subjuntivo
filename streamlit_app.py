@@ -20,15 +20,15 @@ def extraer_verbos(texto):
                    "sería increíble que", "sería ideal que", "sería perfecto que",
                    "sería estupendo que", "sería fabuloso que", "sería deseable que"]
     
-    # Patrón regex para buscar las expresiones seguidas de un verbo en modo subjuntivo
-    patron = r"(?i)(" + "|".join(expresiones) + r")\s+(\w+)\s+(que\s+)?(\w+)"
+    # Patrón regex para buscar las expresiones seguidas de un verbo
+    patron = r"(?i)(" + "|".join(expresiones) + r")\s+(\w+)"
     
     # Buscar coincidencias en el texto
     coincidencias = re.findall(patron, texto)
     
     # Crear un DataFrame con los verbos y su frecuencia
-    df = pd.DataFrame(coincidencias, columns=["Expresión", "Verbo", "Conector", "Verbo Subjuntivo"])
-    df["Frecuencia"] = df.groupby("Verbo Subjuntivo")["Verbo Subjuntivo"].transform("count")
+    df = pd.DataFrame(coincidencias, columns=["Expresión", "Verbo"])
+    df["Frecuencia"] = df.groupby("Verbo")["Verbo"].transform("count")
     df = df.drop_duplicates().reset_index(drop=True)
     
     return df
@@ -50,6 +50,6 @@ if st.button("Extraer verbos"):
             href = f'<a href="data:file/csv;base64,{b64}" download="verbos.csv">Descargar CSV</a>'
             st.markdown(href, unsafe_allow_html=True)
         else:
-            st.warning("No se encontraron verbos en modo subjuntivo después de las expresiones de esperanza o deseo.")
+            st.warning("No se encontraron verbos después de las expresiones de esperanza o deseo.")
     else:
         st.warning("Por favor, carga un archivo .docx.")
